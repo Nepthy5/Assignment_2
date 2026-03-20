@@ -60,6 +60,9 @@ class Coordinate:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+    def __hash__(self):
+        return hash((self.x, self.y))
+
     """
     Check whether a point lies between a x range with [low,up)
     @param low: lower bound of the range
