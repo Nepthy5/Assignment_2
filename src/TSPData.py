@@ -50,9 +50,18 @@ class TSPData:
         for i in range(number_of_products):
             self.distances.append([])
             for j in range(number_of_products):
-                self.distances[i].append(self.product_to_product[i][j].size())
-            self.start_distances.append(self.start_to_product[i].size())
-            self.end_distances.append(self.product_to_end[i].size())
+                if self.product_to_product[i][j] is None:
+                    self.distances[i].append(float('inf'))
+                else:
+                    self.distances[i].append(self.product_to_product[i][j].size())
+            if self.product_to_end[i] is None:
+                self.end_distances.append(float('inf'))
+            else:
+                self.end_distances.append(self.product_to_end[i].size())
+            if self.start_to_product[i] is None:
+                self.start_distances.append(float('inf'))
+            else:
+                self.start_distances.append(self.start_to_product[i].size())
         return
 
     """
@@ -145,8 +154,10 @@ class TSPData:
             for j in range(number_of_product):
                 start = self.product_locations[i]
                 end = self.product_locations[j]
+
+                r, _, _, _ = aco.find_shortest_route(PathSpecification(start, end))
                 product_to_product[i].append(
-                    aco.find_shortest_route(PathSpecification(start, end))
+                    r
                 )
         return product_to_product
 
@@ -159,8 +170,9 @@ class TSPData:
         start = self.spec.get_start()
         start_to_products = []
         for i in range(len(self.product_locations)):
+            r, _, _, _ = aco.find_shortest_route(PathSpecification(start, self.product_locations[i]))
             start_to_products.append(
-                aco.find_shortest_route(PathSpecification(start, self.product_locations[i]))
+                r
             )
         return start_to_products
 
@@ -173,8 +185,9 @@ class TSPData:
         end = self.spec.get_end()
         products_to_end = []
         for i in range(len(self.product_locations)):
+            r, _, _, _= aco.find_shortest_route(PathSpecification(self.product_locations[i], end))
             products_to_end.append(
-                aco.find_shortest_route(PathSpecification(self.product_locations[i], end))
+                r
             )
         return products_to_end
 
